@@ -6,9 +6,9 @@ engine = create_engine(
     "mysql+mysqlconnector://risk_user:RiskProject%4012345@127.0.0.1:3306/fintech_risk"
 )
 
-# -----------------------------
+
 # Load stock prices
-# -----------------------------
+
 
 prices = pd.read_csv("data/raw_prices.csv")
 
@@ -23,7 +23,7 @@ prices = prices.melt(
 prices["Date"] = pd.to_datetime(prices["Date"]).dt.date
 prices = prices.dropna(subset=["close_price"])
 
-# Load into MySQL
+# Loading into MySQL
 prices.to_sql(
     "daily_prices",
     con=engine,
@@ -36,9 +36,9 @@ print("Stock prices loaded successfully!")
 print("Rows loaded:", len(prices))
 
 
-# -----------------------------
+
 # Load macro indicators
-# -----------------------------
+
 
 macro = pd.read_csv("data/raw_macro.csv")
 

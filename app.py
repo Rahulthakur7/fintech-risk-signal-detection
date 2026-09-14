@@ -4,9 +4,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 
-# ============================================================
-# PAGE CONFIGURATION
-# ============================================================
+
 
 st.set_page_config(
     page_title="Fintech Risk Signal Dashboard",
@@ -14,10 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-
-# ============================================================
-# DATA LOADING
-# ============================================================
+#loading Data
 
 @st.cache_data
 def load_data():
@@ -31,7 +26,6 @@ def load_data():
 
     prices.index.name = "Date"
 
-    # Make sure all price columns are numeric
     prices = prices.apply(pd.to_numeric, errors="coerce")
 
     # Anomaly backtest results
@@ -70,9 +64,7 @@ def load_data():
     return prices, backtest, summary
 
 
-# ============================================================
-# LOAD DATA
-# ============================================================
+#loading Data
 
 try:
 
@@ -91,9 +83,7 @@ except FileNotFoundError as e:
     st.stop()
 
 
-# ============================================================
-# PREPARE DATA
-# ============================================================
+#preparing Data
 
 # Remove completely empty columns
 prices = prices.dropna(axis=1, how="all")
@@ -105,9 +95,7 @@ prices = prices.dropna(axis=0, how="all")
 returns = prices.pct_change()
 
 
-# ============================================================
-# SIDEBAR
-# ============================================================
+
 
 st.sidebar.title("Dashboard Controls")
 
@@ -150,9 +138,7 @@ filtered_prices = prices.loc[
 ]
 
 
-# ============================================================
-# MAIN TITLE
-# ============================================================
+
 
 st.title("📊 Fintech Risk Signal Dashboard")
 
@@ -166,9 +152,8 @@ st.caption(
 )
 
 
-# ============================================================
-# STOCK SUMMARY
-# ============================================================
+
+#summary
 
 stock_row = stock_summary[
     stock_summary["Ticker"] == selected_stock
@@ -208,9 +193,7 @@ if not stock_row.empty:
     )
 
 
-# ============================================================
-# RISK OVERVIEW
-# ============================================================
+#risk overview
 
 st.header(
     f"📌 {selected_stock} Risk Overview"
@@ -247,9 +230,7 @@ with col4:
     )
 
 
-# ============================================================
-# PRICE HISTORY + ANOMALIES
-# ============================================================
+#price history anamoly
 
 st.header(
     f"📈 {selected_stock} Price History"
@@ -329,9 +310,7 @@ st.plotly_chart(
 )
 
 
-# ============================================================
-# ANOMALY SUMMARY
-# ============================================================
+
 
 st.header("🚨 Anomaly Summary")
 
@@ -361,14 +340,13 @@ if "Average_Absolute_5D_Return" in summary_display.columns:
 
 st.dataframe(
     summary_display,
-    width="stretch",
+    use_container_width=True,
     hide_index=False
 )
 
 
-# ============================================================
-# 5-DAY FORWARD RETURN ANALYSIS
-# ============================================================
+# 5 day forward return analysis
+
 
 st.header("📊 5-Day Forward Return Analysis")
 
@@ -467,9 +445,7 @@ else:
     )
 
 
-# ============================================================
-# STOCK RISK SIGNAL RANKING
-# ============================================================
+#stock risk signal ranking
 
 st.header("🏆 Stock Risk Signal Ranking")
 
@@ -513,9 +489,7 @@ st.dataframe(
 )
 
 
-# ============================================================
-# LARGE MOVES FOLLOWING ANOMALIES
-# ============================================================
+#large moves following anomalies
 
 st.header("⚠️ Large Moves Following Anomalies")
 
@@ -568,9 +542,7 @@ else:
     )
 
 
-# ============================================================
-# CORRELATION BREAKDOWN ANALYSIS
-# ============================================================
+#corelation breakdown with JPM
 
 st.header("📉 Correlation Breakdown with JPM")
 
@@ -612,9 +584,9 @@ if "JPM" in returns.columns and selected_stock != "JPM":
         )
 
 
-        # ----------------------------------------------------
+        
         # Correlation chart
-        # ----------------------------------------------------
+        
 
         corr_fig = go.Figure()
 
@@ -654,14 +626,9 @@ if "JPM" in returns.columns and selected_stock != "JPM":
         )
 
 
-        # ----------------------------------------------------
-        # Correlation breakdown
-        # ----------------------------------------------------
-        #
-        # Based on Phase 4:
-        # flag when correlation drops by more than 0.4
-        # compared with 60 days earlier.
-        # ----------------------------------------------------
+        
+        
+#correlation breakdown detection
 
         correlation_drop = (
             corr_df["Rolling_Correlation"].shift(60)
@@ -738,9 +705,8 @@ else:
     )
 
 
-# ============================================================
-# FOOTER
-# ============================================================
+
+#footer
 
 st.divider()
 
